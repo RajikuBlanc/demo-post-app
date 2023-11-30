@@ -1,4 +1,4 @@
-import { db } from "@/actions/prisma";
+import { db } from "@/actions/lib";
 import { notFound } from "next/navigation";
 
 /**
