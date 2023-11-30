@@ -53,12 +53,20 @@ export const createPost = async (formData: FormData): Promise<FormState> => {
   // ポストID
   const id = randomUUID();
   // フォーム情報
-  const validatedData = PostSchema.parse({
+  const validatedData = PostSchema.safeParse({
     body: formData.get("body"),
     title: formData.get("title"),
   });
+
+  if (!validatedData.success) {
+    return {
+      status: "error",
+      fieldErrors: validatedData.error.flatten().fieldErrors,
+    };
+  }
+
   const newData: Prisma.PostUncheckedCreateInput = {
-    ...validatedData,
+    ...validatedData.data,
     id,
     authorId,
   };
@@ -101,7 +109,7 @@ export const updatePost = async (
   }
 
   // チェック後情報
-  const newData: Prisma.PostUncheckedCreateInput = {
+  const newData: Prisma.PostUncheckedUpdateInput = {
     ...validatedData.data,
     id,
     authorId,
